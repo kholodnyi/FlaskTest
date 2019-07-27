@@ -1,0 +1,82 @@
+{% extends 'site/base.html' %}
+
+{% block head %}
+    <title>Flask Test</title>
+{% endblock %}
+
+
+
+{% block body %}
+    <table>
+    <tr>
+    {% for todo in todos %}
+        <td>
+        <div class="todo">
+            <table>
+            <tr>
+                <th colspan="4">{{ todo.name }}</th>
+            </tr>
+            <tr>
+                <th>Task</th>
+                <th>Added</th>
+                <th>Completed</th>
+                <th>Actions</th>
+            </tr>
+            {% for task in tasks %}
+                {% if task.todo_id == todo.id %}
+                    <tr>
+                        <td>{{ task.text }}</td>
+                        <td>{{ task.date_created.date() }}</td>
+                        <td>{{ task.completed }}</td>
+                        <td>
+                            {% if task.completed == "✖" %}
+                                <form action="{{ url_for('site.complete_task', id=task.id) }}" method="post">
+                                    <input name="completed" type="hidden" value="✔">
+                                    <input type="submit" role="button" value="Complete task"/>
+                                </form>
+                            {% else %}
+                                <form action="{{ url_for('site.uncomplete_task', id=task.id) }}" method="post">
+                                    <input name="completed" type="hidden" value="✖">
+                                    <input type="submit" role="button" value="Open task"/>
+                                </form>
+                            {% endif %}
+                            <form action="{{ url_for('site.delete_task', id=task.id) }}" method="post">
+                                <input type="submit" role="button" value="Delete task"/>
+                            </form>
+                            <form action="{{ url_for('site.update_task', id=task.id) }}" method="get">
+                                <input type="submit" role="button" value="Update task"/>
+                            </form>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            <tr>
+                <td colspan="4">
+                    <form method="post">
+                        <input name="todo_id" type="hidden" value="{{ todo.id }}">
+                        <input name="completed" type="hidden" value="✖">
+                        <input name="text" type="text">
+                        <input type="submit" value="Add">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <form action="{{ url_for('site.delete_todo', id=todo.id) }}" method="post">
+                        <input type="submit" role="button" value="Delete TODO"/>
+                    </form>
+                </td>
+            </tr>
+            </table>
+        </div>
+        </td>
+    {% endfor %}
+    <td>
+        <form method="post">
+            <input class="new-todo" name="name" type="text">
+            <input class="send-todo" type="submit" value="Create TODO">
+        </form>
+    </td>
+    </tr>
+    </table>
+{% endblock %}
